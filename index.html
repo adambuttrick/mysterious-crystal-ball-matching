@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crystal Ball Matching</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="crystal-title">
+      <div class="glimmer-text">Mysterious crystal ball matching</div>
+    </div>
+    <div class="pixel-art-container">
+        <canvas id="pixelArtCanvas"></canvas>
+    </div>
+    <div class="form-container">
+        <form id="affiliationForm" onsubmit="handleSubmit(event)">
+            <label for="affiliation">Enter Affiliation:</label>
+            <input type="text" id="affiliation" name="affiliation" required>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <script src="ror-search.js"></script>
+    <script>
+        const canvas = document.getElementById('pixelArtCanvas');
+        const ctx = canvas.getContext('2d', { alpha: false });
+
+        function loadAndRenderPixelArt(imagePath) {
+            const img = new Image();
+            
+            img.onload = function() {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.imageSmoothingEnabled = false;
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+            };
+            
+            img.src = imagePath;
+        }
+        loadAndRenderPixelArt('pixel_crystal_ball.png');
+    </script>
+</body>
+</html>
