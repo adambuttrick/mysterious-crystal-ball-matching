@@ -245,7 +245,12 @@ function startAnimation(effect, resultDiv) {
 
     effect.animate();
     
-    waitForAnimation.then(() => {
+    waitForAnimation.then(async () => {
+        const canvas = document.getElementById('pixelArtCanvas');
+        canvas.classList.add('flash-effect');
+        await new Promise(resolve => setTimeout(resolve, 400));
+        canvas.classList.remove('flash-effect');
+        
         setTimeout(() => {
             resultDiv.style.opacity = '1';
         }, 500);
@@ -305,11 +310,7 @@ async function handleSubmit(event) {
         `;
     }
 
-    const existingResult = document.querySelector('.result-container');
-    if (existingResult) {
-        existingResult.remove();
-    }
-
-    resultDiv.className = 'result-container';
-    document.querySelector('.form-container').appendChild(resultDiv);
+    const resultContainer = document.getElementById('resultContainer');
+    resultContainer.innerHTML = '';
+    resultContainer.appendChild(resultDiv);
 }
