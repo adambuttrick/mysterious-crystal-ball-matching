@@ -118,3 +118,16 @@ label {
       background-position: -200% center;
     }
 }
+
+@keyframes flash {
+    0%, 100% {
+        filter: brightness(100%);
+    }
+    50% {
+        filter: brightness(300%);
+    }
+}
+
+.flash-effect {
+    animation: flash 0.2s ease-out 2;
+}
