@@ -230,8 +230,45 @@ function createParticleCanvas() {
     return canvas;
 }
 
+function createSparkles(container) {
+    const numberOfSparkles = 30;  // More sparkles since they're smaller
+    const containerRect = container.getBoundingClientRect();
+    
+    // Create sparkles in waves
+    for (let wave = 0; wave < 3; wave++) {
+        setTimeout(() => {
+            for (let i = 0; i < numberOfSparkles; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                
+                // Random position within and around the container
+                const x = Math.random() * (containerRect.width + 60) - 30;
+                const y = Math.random() * (containerRect.height + 60) - 30;
+                
+                // Smaller size for pixel-like appearance
+                const size = Math.random() * 4 + 2;  // 2-6px size range
+                
+                sparkle.style.width = `${size}px`;
+                sparkle.style.height = `${size}px`;
+                sparkle.style.left = `${Math.round(x)}px`;  // Round to whole pixels
+                sparkle.style.top = `${Math.round(y)}px`;   // Round to whole pixels
+                
+                // Shorter duration for snappier effect
+                const duration = Math.random() * 800 + 400;
+                sparkle.style.animation = `sparkle ${duration}ms steps(8) forwards`;  // Use steps for pixelated animation
+                
+                container.appendChild(sparkle);
+                
+                // Remove sparkle after animation
+                setTimeout(() => {
+                    sparkle.remove();
+                }, duration);
+            }
+        }, wave * 150);  // Slightly faster waves
+    }
+}
 
-function startAnimation(effect, resultDiv) {
+function startAnimation(effect, resultDiv, showSparkles = false) {
     const waitForAnimation = new Promise(resolve => {
         function checkAnimation() {
             if (!effect.isAnimating) {
@@ -251,9 +288,13 @@ function startAnimation(effect, resultDiv) {
         await new Promise(resolve => setTimeout(resolve, 400));
         canvas.classList.remove('flash-effect');
         
-        setTimeout(() => {
-            resultDiv.style.opacity = '1';
-        }, 500);
+        // Show the result and create sparkles only if an organization was found
+        resultDiv.style.opacity = '1';
+        if (showSparkles) {
+            setTimeout(() => {
+                createSparkles(resultDiv);
+            }, 100);
+        }
     });
 }
 
@@ -270,6 +311,8 @@ function displaySearchResult(resultDiv, data) {
     
     containerDiv.appendChild(particleCanvas);
     
+    // Set up result container positioning
+    resultDiv.style.position = 'relative';  
     resultDiv.style.opacity = '0';
     resultDiv.style.transition = 'opacity 0.5s ease-in';
 
@@ -285,16 +328,15 @@ function displaySearchResult(resultDiv, data) {
         `;
         
         const effect = new ParticleEffect(particleCanvas, rorId);
-        startAnimation(effect, resultDiv);
+        startAnimation(effect, resultDiv, true);  // Show sparkles for found organization
     } else {
         const effect = new ParticleEffect(particleCanvas, "?");
         resultDiv.innerHTML = `
             <div style="color: #ff0000;">No matching organizations found.</div>
         `;
-        startAnimation(effect, resultDiv);
+        startAnimation(effect, resultDiv, false);  // Don't show sparkles for no results
     }
 }
-
 
 async function handleSubmit(event) {
     event.preventDefault();
